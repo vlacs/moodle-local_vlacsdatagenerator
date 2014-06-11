@@ -35,15 +35,7 @@ if (empty($CFG->genius_api_client_ips) ||
 
 
 // Tasks:
-// student enrol in the course (updateenrolment function) by ws
 // create three activities into the 3 courses - trigger the code to create assessment
-// create a enrolment request by ws
-// create 2 standard
-// create standard tag (category / subcategory)
-// Add a sis teacher
-// Add a sis student
-// Trigger a grade of a user to see if the progress table and grade assessment is done.
-// Also try to trigger finish from survey to see if the bonus is applyied.
 
 // Fill up the database with some test data calling assessment manager web services.
 foreach($courses as $course) {
@@ -73,6 +65,9 @@ foreach($affiliations as $affiliation) {
 foreach($communications as $communication) {
     call('updatecomm', $communication);
 }
+foreach($enrolmentreqs as $enrolmentreq) {
+    call('updaterequestedcourse', $enrolmentreq);
+}
 foreach($enrolments as $enrolment) {
     call('updateenrollment', $enrolment);
 }
@@ -99,6 +94,47 @@ foreach($asmtpods as $asmtpod) {
     amgr_reset_asmt_grades_dirtypods(array($asmtpod->id));
 
     print_r('"'.$asmtpod->name . '" ');
+    print_r($successtext);
+    print_r('<br/><br/>');
+}
+
+// Create some standards.
+foreach($standards as $standard) {
+    $standard = (object) $standard;
+
+    // this is basically the code logic of process_common_core.php.
+    $astandard = get_record('standard', 'name', $standard->name, 'standard_type_id', $standard->standard_type_id);
+    if (empty($astandard)) {
+        $standard->timecreated = time();
+        $standard->id = insert_record('standard', $standard);
+        $successtext = 'standard created.';
+    } else {
+        $standard->id = $astandard->id;
+        update_record('standard', $standard);
+        $successtext = 'standard updated.';
+    }
+
+    print_r('"'.$standard->name . '" ');
+    print_r($successtext);
+    print_r('<br/><br/>');
+}
+
+// Create some standard tags.
+foreach($standardtags as $standardtag) {
+    $standardtag = (object) $standardtag;
+
+    // this is basically the code logic of process_common_core.php.
+    $astandardtag = get_record('standard_tag', 'name', $standardtag->name, 'value', $standardtag->value);
+    if (empty($astandardtag)) {
+        $standardtag->id = insert_record('standard_tag', $standardtag);
+        $successtext = 'standard tag created.';
+    } else {
+        $standardtag->id = $astandardtag->id;
+        update_record('standard_tag', $standardtag);
+        $successtext = 'standard tag updated.';
+    }
+
+    print_r('"'.$standardtag->name . '" ');
     print_r($successtext);
     print_r('<br/><br/>');
 }

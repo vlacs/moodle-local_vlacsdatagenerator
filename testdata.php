@@ -147,40 +147,67 @@ $asmtpods[] = array(
 /**
  * Enrolment requests
  **/
+$enrolmentreqs = array();
+$enrolmentreqs[] = array(
+    'RequestedCourseIndex' => 1, // enrolment_request_idstr
+    'UserIndex' => '3', // sis_user_idstr
+    'CourseIndex' => 30, // master_course_idstr
+    'StartDate' => '2014-06-11 01:01:01', // start_date - 'Format: YYYY-MM-DD HH:MM:SS'
+    'PodIdList' => '2', // asmt_pod_id_list - "Pipe-delimited list of PodIds"
+    'Approved' => 1, // approval_status_idstr 'We will make this field required after you begin sending it.' - Note: it doesn't seem this field is used,
+);
+
 
 /**
  * Enrolments
  */
 $enrolments = array();
-//$enrolments[] = array(
-//    'EnrollmentIndex' => '', // enrolment_idstr
-//    'SectionIndex' => '', // classroom_idstr
-//    'UserIndex' => '', // sis_user_idstr
-//    'PodIdList' => '', // asmt_pod_id_list
-//    'Status' => 'ACTIVE', // sis_user_idstr - UserIndex values for user mapped directly to the primary teacher of this section.
-//    'CurrentGrade' => '', // sis_user_idstr_list - Pipe-delimited list of UserIndex values for all users mapped to the Teacher of this section. The primary teacher MUST be first.
-//    'CurrentAssignment' => '',
-//    'TotalAssignments' => '', // current_version
-//    'ActivationStatus' => '', // funding_credit
-//    'CreditLevel' => '', // lms_idstr
-//    'force' => '', // sis_user_idstr - UserIndex values for user mapped directly to the primary teacher of this section.
-//    'RequestedCourseIndex' => '', // sis_user_idstr_list - Pipe-delimited list of UserIndex values for all users mapped to the Teacher of this section. The primary teacher MUST be first.
-//    'EndDate' => '',
-//    'ExitDate' => '', // current_version
-//    'ActualStartDate' => '', // funding_credit
-//    'EntryDate' => '', // lms_idstr
-//);
+$enrolments[] = array(
+    'EnrollmentIndex' => 1, // enrolment_idstr
+    'SectionIndex' => 1, // classroom_idstr
+    'UserIndex' => '3', // sis_user_idstr
+    'PodIdList' => '2', // asmt_pod_id_list - "Pipe-delimited list of PodIds"
+    'Status' => 'ACTIVE', // status_idstr - "One of: ACTIVE, WITHDRAWN_NO_GRADE, WITHDRAWN_FAILING, COMPLETED"
+    'CurrentGrade' => null, // current_grade_from_sis - "VLACS will only use this in case of an override coming from the SIS (ex: estart)"
+    'CurrentAssignment' => null, // current_assignment_from_sis - "the current number of assessments that have been completed - VLACS will only use this in the case of an override coming from the SIS (ex: estart)"
+    'TotalAssignments' => null, // total_assignments_from_sis - "the total number of assessments that must be completed - VLACS will only use this in the case of an override coming from the SIS (ex: estart)"
+    'ActivationStatus' => 'ENABLED', // activation_status_idstr - "One of: ENABLED, CONTACT_INSTRUCTOR"
+    'CreditLevel' => 1, // credit_level
+    'force' => 0, // force_recalculations - "do not short-circuit processing even if there appear to be no changes" - this will trigger data pull from moosis
+    'RequestedCourseIndex' => 1, // enrolment_request_idstr
+    'EndDate' => '10 September 2040', // proposed_completion_date - MUST BE FILLED OTHERWISE A GENIUS API CALL IS EXECUTED - strtotime will be apply to this date
+    'ExitDate' => '20 September 2040', // actual_exit_date - MUST BE FILLED OTHERWISE A GENIUS API CALL IS EXECUTED - strtotime will be apply to this date
+    'ActualStartDate' => 'now', // actual_start_date - strtotime will be apply to this date
+    'EntryDate' => 'now', // enrolment_date - strtotime will be apply to this date
+);
 
 
 /**
  * Standards
  **/
+$standards = array();
+$standards[] = array(
+    'standard_type_id' => 3,
+    'name' => 'F:5.2',
+    'description' => 'Students show evidence of becoming life-long learners by using the language for personal enjoyment and enrichment.',
+    'keywords' => ''
+);
 
 
 /**
  * Standard tags
  **/
-
+$standardtags = array();
+$standardtags[] = array(
+    'standard_id' => 1,
+    'name' => 'Category',
+    'value' => 'Using Probability To Make Decisions'
+);
+$standardtags[] = array(
+    'standard_id' => 1,
+    'name' => 'Sub Category',
+    'value' => 'Use Probability To Evaluate Outcomes Of Decisions'
+);
 
 /**
  * Affiliation
