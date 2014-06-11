@@ -1,6 +1,13 @@
 <?php
 
-function call($functionname, $params) {
+/**
+ * Call a assessment manager web service function.
+ * By default it return the documentation.
+ *
+ * @param $functionname the web service function name
+ * @param $params the parameter of the function
+ */
+function call($functionname = 'documentation', $params = array()) {
     global $CFG;
 
     $token = $CFG->genius_api_token_incoming;

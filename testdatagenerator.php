@@ -31,7 +31,7 @@ if (empty($CFG->genius_api_client_ips) ||
 }
 
 // Display the web service documentation.
-//call('documentation', array());
+//call();
 
 
 // Tasks:
