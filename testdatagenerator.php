@@ -140,68 +140,68 @@ foreach($assessments as $assessment) {
     $dbcourse = get_record('course', 'idnumber', $assessment['classroom_idstr']);
 
     // Create an assignmen - Code logic from course/modedit.php
-    $coursemodule = new stdClass();
-    $coursemodule->assignmenttype = $assessment['assignmenttype'];
-    $coursemodule->type = $assessment['assignmenttype'];
-    $coursemodule->add = 'assignment';
-    $coursemodule->modulename = 'assignment';
-    $coursemodule->grade = 100;
-    $coursemodule->course = $dbcourse->id;
-    $coursemodule->section = 0;
-    $coursemodule->visible = 1;
-    $coursemodule->timeavailable = 1402565100;
-    $coursemodule->timedue = 1403169900;
-    $coursemodule->groupmode = 0;
-    $coursemodule->module = 1;
-
-    $instance = (object) $assessment;
-    $instance->course = $dbcourse->id;
-    $instance->timedue = $coursemodule->timedue;
-    $instance->timeavalailable = $coursemodule->timeavailable;
-    $instance->cmidnumber = null;
-    $coursemodule->instance = assignment_add_instance($instance);
-    $coursemodule->coursemodule = add_course_module($coursemodule);
-    $sectionid = add_mod_to_section($coursemodule);
-    set_field("course_modules", "section", $sectionid, "id", $coursemodule->coursemodule);
-    set_coursemodule_visible($coursemodule->coursemodule, $coursemodule->visible);
-    if (isset($coursemodule->cmidnumber)) {
-        set_coursemodule_idnumber($coursemodule->coursemodule, $coursemodule->cmidnumber);
-    }
-    if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$coursemodule->modulename,
-        'iteminstance'=>$coursemodule->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
-        if ($grade_item->idnumber != $coursemodule->cmidnumber) {
-            $grade_item->idnumber = $coursemodule->cmidnumber;
-            $grade_item->update();
+    if (!record_exists('assignment', 'name', $assessment['name'], 'assignmenttype', $assessment['assignmenttype'])) {
+        $coursemodule = new stdClass();
+        $coursemodule->assignmenttype = $assessment['assignmenttype'];
+        $coursemodule->type = $assessment['assignmenttype'];
+        $coursemodule->add = 'assignment';
+        $coursemodule->modulename = 'assignment';
+        $coursemodule->grade = 100;
+        $coursemodule->course = $dbcourse->id;
+        $coursemodule->section = 0;
+        $coursemodule->visible = 1;
+        $coursemodule->timeavailable = 1402565100;
+        $coursemodule->timedue = 1403169900;
+        $coursemodule->groupmode = 0;
+        $coursemodule->module = 1;
+        $instance = (object) $assessment;
+        $instance->course = $dbcourse->id;
+        $instance->timedue = $coursemodule->timedue;
+        $instance->timeavalailable = $coursemodule->timeavailable;
+        $instance->cmidnumber = null;
+        $coursemodule->instance = assignment_add_instance($instance);
+        $coursemodule->coursemodule = add_course_module($coursemodule);
+        $sectionid = add_mod_to_section($coursemodule);
+        set_field("course_modules", "section", $sectionid, "id", $coursemodule->coursemodule);
+        set_coursemodule_visible($coursemodule->coursemodule, $coursemodule->visible);
+        if (isset($coursemodule->cmidnumber)) {
+            set_coursemodule_idnumber($coursemodule->coursemodule, $coursemodule->cmidnumber);
         }
-    }
-    $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$coursemodule->modulename,
-        'iteminstance'=>$coursemodule->instance, 'courseid'=>$COURSE->id));
-    if ($items and isset($coursemodule->gradecat)) {
-        if ($coursemodule->gradecat == -1) {
-            $grade_category = new grade_category();
-            $grade_category->courseid = $COURSE->id;
-            $grade_category->fullname = stripslashes($coursemodule->name);
-            $grade_category->insert();
-            if ($grade_item) {
-                $parent = $grade_item->get_parent_category();
-                $grade_category->set_parent($parent->id);
-            }
-            $coursemodule->gradecat = $grade_category->id;
-        }
-        foreach ($items as $itemid=>$unused) {
-            $items[$itemid]->set_parent($coursemodule->gradecat);
-            if ($itemid == $grade_item->id) {
-                // use updated grade_item
-                $grade_item = $items[$itemid];
+        if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$coursemodule->modulename,
+            'iteminstance'=>$coursemodule->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
+            if ($grade_item->idnumber != $coursemodule->cmidnumber) {
+                $grade_item->idnumber = $coursemodule->cmidnumber;
+                $grade_item->update();
             }
         }
+        $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$coursemodule->modulename,
+            'iteminstance'=>$coursemodule->instance, 'courseid'=>$COURSE->id));
+        if ($items and isset($coursemodule->gradecat)) {
+            if ($coursemodule->gradecat == -1) {
+                $grade_category = new grade_category();
+                $grade_category->courseid = $COURSE->id;
+                $grade_category->fullname = stripslashes($coursemodule->name);
+                $grade_category->insert();
+                if ($grade_item) {
+                    $parent = $grade_item->get_parent_category();
+                    $grade_category->set_parent($parent->id);
+                }
+                $coursemodule->gradecat = $grade_category->id;
+            }
+            foreach ($items as $itemid=>$unused) {
+                $items[$itemid]->set_parent($coursemodule->gradecat);
+                if ($itemid == $grade_item->id) {
+                    // use updated grade_item
+                    $grade_item = $items[$itemid];
+                }
+            }
+        }
+        // Note: we skip outcome code logic.
+
+        // Now we generate the assessment for the activity.
+        $messages = amgr_update($dbcourse);
+        print_r($messages . ' ');
+        print_r('"'.$instance->name . '" assignment and assessment created.');
+        print_r('<br/><br/>');
     }
-    //Note: we skip outcome code logic.
-
-    // Generate the assessment for the activity.
-    $messages = amgr_update($dbcourse);
-    print_r($messages . ' ');
-
-    print_r('"'.$instance->name . '" assignment and assessment created.');
-    print_r('<br/><br/>');
 }
