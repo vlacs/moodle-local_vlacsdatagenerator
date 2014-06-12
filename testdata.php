@@ -259,4 +259,16 @@ $communications[] = array(
 
 /**
  * Assessments
+ *
+ * The attributs are:
+ * - the fields from the 'assignment' table.
+ * - a 'classroom_idstr' attribut (to know which course is concerned).
  **/
+$assessments = array();
+$assessments[] = array(
+    'classroom_idstr' => 1,
+    'assignmenttype' => 'offline',
+    'name' => 'An offline assignment',
+    'description' => 'This is an offline assignment.',
+    'grade' => 100
+);
