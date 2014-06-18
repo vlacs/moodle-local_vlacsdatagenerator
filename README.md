@@ -5,7 +5,7 @@ VLACS test data generator
 
 2- install all the assessment_manager blocks/plugins.
 
-3- install the local plugin
+3- install the local plugin (copy this folder in Moodle /local folder and go to /admin/index.php with your browser)
 
 3-b on 1.9 you may have to manually trigger the script db/install.php
 

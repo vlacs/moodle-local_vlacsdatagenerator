@@ -11,9 +11,9 @@ require_once('./staticdata.php');
 
 // Insert/update the pod types.
 foreach($asmtpodtypes as $asmtpodtype) {
-    $asmtpodtype->id = get_field('asmt_pod_type', 'id', 'name', $asmtpodtype->name);
+    $asmtpodtype->id = $DB->get_field('asmt_pod_type', 'id', array('name' => $asmtpodtype->name));
     if (!$asmtpodtype->id) {
-        $podtypeid = insert_record('asmt_pod_type', $asmtpodtype);
+        $podtypeid = $DB->insert_record('asmt_pod_type', $asmtpodtype);
         if ($podtypeid) {
             print_r($asmtpodtype->name . ' pod type created.<br/>');
         }
@@ -26,9 +26,9 @@ foreach($asmtpodtypes as $asmtpodtype) {
 
 // Insert/update the standard types.
 foreach($standardtypes as $standardtype) {
-    $standardtype->id = get_field('standard_type', 'id', 'name', $standardtype->name);
+    $standardtype->id = $DB->get_field('standard_type', 'id', array('name' => $standardtype->name));
     if (!$standardtype->id) {
-        $standardtypeid = insert_record('standard_type', $standardtype);
+        $standardtypeid = $DB->insert_record('standard_type', $standardtype);
         if ($standardtypeid) {
             print_r($standardtype->name . ' standard type created.<br/>');
         }
@@ -41,9 +41,9 @@ foreach($standardtypes as $standardtype) {
 
 // Insert/update the transcript credit types.
 foreach($transcriptcredittypes as $transcriptcredittype) {
-    $transcriptcredittype->id = get_field('pod_transcript_credit_type', 'id', 'name', $transcriptcredittype->name);
+    $transcriptcredittype->id = $DB->get_field('pod_transcript_credit_type', 'id', array('name' => $transcriptcredittype->name));
     if (!$transcriptcredittype->id) {
-        $transcriptcredittypeid = insert_record('pod_transcript_credit_type', $transcriptcredittype);
+        $transcriptcredittypeid = $DB->insert_record('pod_transcript_credit_type', $transcriptcredittype);
         if ($transcriptcredittypeid) {
             print_r($transcriptcredittype->name . ' transcript credit type created.<br/>');
         }

@@ -74,17 +74,16 @@ foreach($enrolments as $enrolment) {
 foreach($asmtpods as $asmtpod) {
     $asmtpod = (object) $asmtpod;
     // this is basically the code logic of asmt_pod/edit.php without the call to the Genius API (i.e. not push of data in the SIS).
-    $pod = get_record('asmt_pod', 'name', $asmtpod->name, 'master_course_version_id',
-        $asmtpod->master_course_version_id);
+    $pod = $DB->get_record('asmt_pod', array('name' => $asmtpod->name, 'master_course_version_id' => $asmtpod->master_course_version_id));
     amgr_ensure_mcv2apt_exists($asmtpod->master_course_version_id, $asmtpod->asmt_pod_type_id);
     $asmtpod->timemodified = time();
     if (empty($pod)) {
         $asmtpod->timecreated = $asmtpod->timemodified;
-        $asmtpod->id = insert_record('asmt_pod', $asmtpod);
+        $asmtpod->id = $DB->insert_record('asmt_pod', $asmtpod);
         $successtext = 'pod created.';
     } else {
         $asmtpod->id = $pod->id;
-        update_record('asmt_pod', $asmtpod);
+        $DB->update_record('asmt_pod', $asmtpod);
         $successtext = 'pod updated.';
     }
     amgr_reset_asmt_grades_dirtypods(array($asmtpod->id));
@@ -99,14 +98,14 @@ foreach($standards as $standard) {
     $standard = (object) $standard;
 
     // this is basically the code logic of process_common_core.php.
-    $astandard = get_record('standard', 'name', $standard->name, 'standard_type_id', $standard->standard_type_id);
+    $astandard = $DB->get_record('standard', array('name' => $standard->name, 'standard_type_id' => $standard->standard_type_id));
     if (empty($astandard)) {
         $standard->timecreated = time();
-        $standard->id = insert_record('standard', $standard);
+        $standard->id = $DB->insert_record('standard', $standard);
         $successtext = 'standard created.';
     } else {
         $standard->id = $astandard->id;
-        update_record('standard', $standard);
+        $DB->update_record('standard', $standard);
         $successtext = 'standard updated.';
     }
 
@@ -120,13 +119,14 @@ foreach($standardtags as $standardtag) {
     $standardtag = (object) $standardtag;
 
     // this is basically the code logic of process_common_core.php.
-    $astandardtag = get_record('standard_tag', 'name', $standardtag->name, 'value', $standardtag->value);
+    $wheresql = $DB->sql_compare_text('value') . ' = ' . $DB->sql_compare_text(':value') . 'AND name = :name';
+    $astandardtag = $DB->get_record_select('standard_tag', $wheresql, array('name' => $standardtag->name, 'value' => $standardtag->value));
     if (empty($astandardtag)) {
-        $standardtag->id = insert_record('standard_tag', $standardtag);
+        $standardtag->id = $DB->insert_record('standard_tag', $standardtag);
         $successtext = 'standard tag created.';
     } else {
         $standardtag->id = $astandardtag->id;
-        update_record('standard_tag', $standardtag);
+        $DB->update_record('standard_tag', $standardtag);
         $successtext = 'standard tag updated.';
     }
 
@@ -137,10 +137,10 @@ foreach($standardtags as $standardtag) {
 
 // Create an assignment for each courses and trigger the assessment generation code.
 foreach($assessments as $assessment) {
-    $dbcourse = get_record('course', 'idnumber', $assessment['classroom_idstr']);
+    $dbcourse = $DB->get_record('course', array('idnumber' => $assessment['classroom_idstr']));
 
-    // Create an assignmen - Code logic from course/modedit.php
-    if (!record_exists('assignment', 'name', $assessment['name'], 'assignmenttype', $assessment['assignmenttype'])) {
+    // Create an assignment - Code logic from course/modedit.php
+    if (!$DB->record_exists('assignment', array('name' => $assessment['name'], 'assignmenttype' => $assessment['assignmenttype']))) {
         $coursemodule = new stdClass();
         $coursemodule->assignmenttype = $assessment['assignmenttype'];
         $coursemodule->type = $assessment['assignmenttype'];
@@ -148,7 +148,7 @@ foreach($assessments as $assessment) {
         $coursemodule->modulename = 'assignment';
         $coursemodule->grade = 100;
         $coursemodule->course = $dbcourse->id;
-        $coursemodule->section = 0;
+        $coursemodule->section = 1;
         $coursemodule->visible = 1;
         $coursemodule->timeavailable = 1402565100;
         $coursemodule->timedue = 1403169900;
@@ -159,10 +159,16 @@ foreach($assessments as $assessment) {
         $instance->timedue = $coursemodule->timedue;
         $instance->timeavalailable = $coursemodule->timeavailable;
         $instance->cmidnumber = null;
-        $coursemodule->instance = assignment_add_instance($instance);
+        $instance->intro = 'this is an intro';
+        $instance->introformat = FORMAT_HTML;
+        $PAGE->set_context(context_course::instance($dbcourse->id));
+        require_once($CFG->dirroot . '/course/lib.php');
         $coursemodule->coursemodule = add_course_module($coursemodule);
+        $instance->coursemodule = $coursemodule->coursemodule;
+        $coursemodule->instance = assignment_add_instance($instance);
+        $DB->set_field('course_modules', 'instance', $coursemodule->instance, array('id'=>$coursemodule->coursemodule));
         $sectionid = add_mod_to_section($coursemodule);
-        set_field("course_modules", "section", $sectionid, "id", $coursemodule->coursemodule);
+        $DB->set_field("course_modules", "section", $sectionid, array("id" => $coursemodule->coursemodule));
         set_coursemodule_visible($coursemodule->coursemodule, $coursemodule->visible);
         if (isset($coursemodule->cmidnumber)) {
             set_coursemodule_idnumber($coursemodule->coursemodule, $coursemodule->cmidnumber);
@@ -197,6 +203,9 @@ foreach($assessments as $assessment) {
             }
         }
         // Note: we skip outcome code logic.
+
+        rebuild_course_cache($dbcourse->id);
+        grade_regrade_final_grades($dbcourse->id);
 
         // Now we generate the assessment for the activity.
         $messages = amgr_update($dbcourse);
