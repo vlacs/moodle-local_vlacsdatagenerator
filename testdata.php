@@ -215,19 +215,19 @@ $standardtags[] = array(
 $affiliations = array();
 $affiliations[] = array(
     'AffiliationIndex' => 11, // sis_affiliation_idstr
-    'Name' => 'AbundantLivingChristianLearningCenter', // name
-    'ContactName' => 'Abundant Living Christian Learning Center', // contactname
-    'ContactPhone' => '603-498-8533', // contactphone
-    'ContactEmail' => 'info@vlacs.org', // contactemail
+    'Name' => 'Fish School', // name
+    'ContactName' => 'Mr. Sturgeon', // contactname
+    'ContactPhone' => '001-867-5309', // contactphone
+    'ContactEmail' => 'info@fish.org', // contactemail
     'Status' => 'ACTIVE', // status_idstr
-    'Street' => 'PO Box 1442', // street
-    'City' => 'Milton', // city
-    'State' => 'New Hampshire', // state
-    'Country' => 'US', // country
-    'ZIP' => '03851-1442', // zip
+    'Street' => 'PO Box 1234', // street
+    'City' => 'Saskatoon', // city
+    'State' => 'Grenada', // state
+    'Country' => 'YE', // country
+    'ZIP' => '12345-1442', // zip
     'Notes' => '', // notes
     'BillSetIndex' => '', // sis_billset_idstr
-    'DistrictCode' => 129, // districtcode
+    'DistrictCode' => 291, // districtcode
 );
 
 /**
