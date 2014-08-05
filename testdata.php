@@ -70,8 +70,8 @@ $guardians[] = array(
 $student2guardians = array();
 $student2guardians[] = array(
     'TableIndex' => '1', // student2guardian_idstr
-    'StudentUserIndex' => 'sisuser3', // student_user_idstr
-    'GuardianUserIndex' => 'sisuser2', // guardian_user_idstr
+    'StudentUserIndex' => '3', // student_user_idstr
+    'GuardianUserIndex' => '2', // guardian_user_idstr
     'Operation' => 0, // operation (if 'deleted' then it is marked as deleted)
 );
 
