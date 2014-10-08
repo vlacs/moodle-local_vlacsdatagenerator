@@ -22,12 +22,14 @@ require_once($CFG->dirroot . "/blocks/assessment_manager/lib.php");
 // Check the API incoming token is set.
 if (empty($CFG->genius_api_token_incoming)) {
     print_r('ERROR: set a value to $CFG->genius_api_token_incoming in your Moodle site config.php file.<br/><br/>');
+    die();
 }
 
 // Check your IP is whitelisted.
 if (empty($CFG->genius_api_client_ips) ||
     !in_array($_SERVER['SERVER_ADDR'] , $CFG->genius_api_client_ips)) {
     print_r('ERROR: add your IP: $CFG->genius_api_client_ips[]=\''.$_SERVER['SERVER_ADDR'].'\'; in your Moodle site config.php file.<br/><br/>');
+    die();
 }
 
 // Display the web service documentation.
@@ -140,12 +142,10 @@ foreach($assessments as $assessment) {
     $dbcourse = $DB->get_record('course', array('idnumber' => $assessment['classroom_idstr']));
 
     // Create an assignment - Code logic from course/modedit.php
-    if (!$DB->record_exists('assignment', array('name' => $assessment['name'], 'assignmenttype' => $assessment['assignmenttype']))) {
+    if (!$DB->record_exists('assign', array('name' => $assessment['name']))) {
         $coursemodule = new stdClass();
-        $coursemodule->assignmenttype = $assessment['assignmenttype'];
-        $coursemodule->type = $assessment['assignmenttype'];
-        $coursemodule->add = 'assignment';
-        $coursemodule->modulename = 'assignment';
+        $coursemodule->add = 'assign';
+        $coursemodule->modulename = 'assign';
         $coursemodule->grade = 100;
         $coursemodule->course = $dbcourse->id;
         $coursemodule->section = 1;
@@ -167,7 +167,7 @@ foreach($assessments as $assessment) {
         $instance->coursemodule = $coursemodule->coursemodule;
         $coursemodule->instance = assignment_add_instance($instance);
         $DB->set_field('course_modules', 'instance', $coursemodule->instance, array('id'=>$coursemodule->coursemodule));
-        $sectionid = add_mod_to_section($coursemodule);
+        $sectionid =  course_add_cm_to_section($coursemodule->course, $coursemodule->coursemodule, $coursemodule->section);
         $DB->set_field("course_modules", "section", $sectionid, array("id" => $coursemodule->coursemodule));
         set_coursemodule_visible($coursemodule->coursemodule, $coursemodule->visible);
         if (isset($coursemodule->cmidnumber)) {

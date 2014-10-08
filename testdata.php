@@ -267,7 +267,6 @@ $communications[] = array(
 $assessments = array();
 $assessments[] = array(
     'classroom_idstr' => 1,
-    'assignmenttype' => 'offline',
     'name' => 'An offline assignment',
     'description' => 'This is an offline assignment.',
     'grade' => 100
