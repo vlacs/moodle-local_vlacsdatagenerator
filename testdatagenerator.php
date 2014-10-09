@@ -63,16 +63,9 @@ foreach($affiliations as $affiliation) {
 foreach($communications as $communication) {
     call('updatecomm', $communication);
 }
-foreach($enrolmentreqs as $enrolmentreq) {
-    call('updaterequestedcourse', $enrolmentreq);
-}
-foreach($enrolments as $enrolment) {
-    call('updateenrollment', $enrolment);
-}
-
-// Fill up the database with some test data calling some assessment manager functions.
 
 // Create some assessment pods.
+// Obviously this is not a ws, but we need to create the pods before creating the enrolment.
 foreach($asmtpods as $asmtpod) {
     $asmtpod = (object) $asmtpod;
     // this is basically the code logic of asmt_pod/edit.php without the call to the Genius API (i.e. not push of data in the SIS).
@@ -94,6 +87,15 @@ foreach($asmtpods as $asmtpod) {
     print_r($successtext);
     print_r('<br/><br/>');
 }
+
+foreach($enrolmentreqs as $enrolmentreq) {
+    call('updaterequestedcourse', $enrolmentreq);
+}
+foreach($enrolments as $enrolment) {
+    call('updateenrollment', $enrolment);
+}
+
+// Fill up the database with some test data calling some assessment manager functions.
 
 // Create some standards.
 foreach($standards as $standard) {
@@ -143,6 +145,7 @@ foreach($assessments as $assessment) {
 
     // Create an assignment - Code logic from course/modedit.php
     if (!$DB->record_exists('assign', array('name' => $assessment['name']))) {
+
         $coursemodule = new stdClass();
         $coursemodule->add = 'assign';
         $coursemodule->modulename = 'assign';
@@ -161,11 +164,27 @@ foreach($assessments as $assessment) {
         $instance->cmidnumber = null;
         $instance->intro = 'this is an intro';
         $instance->introformat = FORMAT_HTML;
+        $instance->submissiondrafts = 0;
+        $instance->requiresubmissionstatement = 0;
+        $instance->sendnotifications = 0;
+        $instance->sendlatenotifications = 0;
+        $instance->sendstudentnotifications = 0;
+        $instance->allowsubmissionsfromdate = 0;
+        $instance->completionsubmit = 0;
+        $instance->teamsubmission = 0;
+        $instance->requireallteammemberssubmit = 0;
+        $instance->attemptreopenmethod = 0;
+        $instance->cutoffdate = 0;
+        $instance->duedate = 0;
+        $instance->blindmarking = 0;
+        $instance->markingworkflow = 0;
+        $instance->markingallocation = 0;
         $PAGE->set_context(context_course::instance($dbcourse->id));
         require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/mod/assign/lib.php');
         $coursemodule->coursemodule = add_course_module($coursemodule);
         $instance->coursemodule = $coursemodule->coursemodule;
-        $coursemodule->instance = assignment_add_instance($instance);
+        $coursemodule->instance = assign_add_instance($instance);
         $DB->set_field('course_modules', 'instance', $coursemodule->instance, array('id'=>$coursemodule->coursemodule));
         $sectionid =  course_add_cm_to_section($coursemodule->course, $coursemodule->coursemodule, $coursemodule->section);
         $DB->set_field("course_modules", "section", $sectionid, array("id" => $coursemodule->coursemodule));
