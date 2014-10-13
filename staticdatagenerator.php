@@ -7,7 +7,7 @@
 require_once((dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 // Load the static data. Edit this file only if the values change in production database.
-require_once('./staticdata.php');
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/staticdata.php');
 
 // Insert/update the pod types.
 foreach($asmtpodtypes as $asmtpodtype) {

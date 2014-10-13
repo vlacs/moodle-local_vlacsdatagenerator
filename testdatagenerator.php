@@ -7,14 +7,14 @@
 require_once((dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 // Load the test data generator library.
-require_once('./locallib.php');
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/locallib.php');
 
 // Load the test data - you can edit this file with your own test data.
-require_once('./testdata.php');
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/testdata.php');
 
 // Load the DB static data generator - you should not have to change this file,
 // except if some new data have been manually added to the DB of all Moodle test sites.
-require_once('./staticdatagenerator.php');
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/staticdatagenerator.php');
 
 // Load the assessment manager library - it is need for creating assessmenet pods and other things.
 require_once($CFG->dirroot . "/blocks/assessment_manager/lib.php");
@@ -26,14 +26,27 @@ if (empty($CFG->genius_api_token_incoming)) {
 }
 
 // Check your IP is whitelisted.
+if (empty($_SERVER['SERVER_ADDR'])) {
+    $serverip = '127.0.0.1';
+} else {
+    $serverip = $_SERVER['SERVER_ADDR'];
+}
+
 if (empty($CFG->genius_api_client_ips) ||
-    !in_array($_SERVER['SERVER_ADDR'] , $CFG->genius_api_client_ips)) {
-    print_r('ERROR: add your IP: $CFG->genius_api_client_ips[]=\''.$_SERVER['SERVER_ADDR'].'\'; in your Moodle site config.php file.<br/><br/>');
+    !in_array($serverip , $CFG->genius_api_client_ips)) {
+
+    print_r('ERROR: add your IP: $CFG->genius_api_client_ips[]=\''.$serverip.'\'; in your Moodle site config.php file.<br/><br/>');
     die();
 }
 
+// Display the header admin page.
+require_once($CFG->libdir.'/adminlib.php');
+admin_externalpage_setup('vlacstestdatagenerator');
+echo $OUTPUT->header();
+
 // Display the web service documentation.
 //call();
+
 
 // Fill up the database with some test data calling assessment manager web services.
 foreach($courses as $course) {
@@ -233,3 +246,6 @@ foreach($assessments as $assessment) {
         print_r('<br/><br/>');
     }
 }
+
+echo $OUTPUT->footer();
+
