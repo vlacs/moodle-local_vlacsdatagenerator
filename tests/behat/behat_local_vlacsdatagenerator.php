@@ -47,7 +47,12 @@ class behat_local_vlacsdatagenerator extends behat_base {
     public function i_load_the_vla_test_data() {
         global $CFG, $DB;
 
-        $steps = array();
+        $steps = array(
+            new Given ('I log in as "admin"'),
+            new Given('I expand "' . get_string('administrationsite') .'" node'),
+            new Given('I expand "' . get_string('pluginname', 'local_vlacsdatagenerator') .'" node'),
+            new Given('I click on "' . get_string('rungenerator', 'local_vlacsdatagenerator'). '" "link"'),
+        );
         return $steps;
     }
 }
