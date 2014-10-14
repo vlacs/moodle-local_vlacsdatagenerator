@@ -6,19 +6,6 @@
 // Load Moodle config file.
 require_once((dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
-// Load the test data generator library.
-require_once($CFG->dirroot . '/local/vlacsdatagenerator/locallib.php');
-
-// Load the test data - you can edit this file with your own test data.
-require_once($CFG->dirroot . '/local/vlacsdatagenerator/testdata.php');
-
-// Load the DB static data generator - you should not have to change this file,
-// except if some new data have been manually added to the DB of all Moodle test sites.
-require_once($CFG->dirroot . '/local/vlacsdatagenerator/staticdatagenerator.php');
-
-// Load the assessment manager library - it is need for creating assessmenet pods and other things.
-require_once($CFG->dirroot . "/blocks/assessment_manager/lib.php");
-
 // Check the API incoming token is set.
 if (empty($CFG->genius_api_token_incoming)) {
     print_r('ERROR: set a value to $CFG->genius_api_token_incoming in your Moodle site config.php file.<br/><br/>');
@@ -40,9 +27,23 @@ if (empty($CFG->genius_api_client_ips) ||
 }
 
 // Display the header admin page.
+$PAGE->set_url('/local/vlacsdatagenerator/testdatagenerator.php', array());
 require_once($CFG->libdir.'/adminlib.php');
 admin_externalpage_setup('vlacstestdatagenerator');
 echo $OUTPUT->header();
+
+// Load the test data generator library.
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/locallib.php');
+
+// Load the test data - you can edit this file with your own test data.
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/testdata.php');
+
+// Load the DB static data generator - you should not have to change this file,
+// except if some new data have been manually added to the DB of all Moodle test sites.
+require_once($CFG->dirroot . '/local/vlacsdatagenerator/staticdatagenerator.php');
+
+// Load the assessment manager library - it is need for creating assessmenet pods and other things.
+require_once($CFG->dirroot . "/blocks/assessment_manager/lib.php");
 
 // Display the web service documentation.
 //call();
