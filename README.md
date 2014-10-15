@@ -21,7 +21,7 @@ $CFG->genius_api_client_ips[]= '127.0.0.1';
 
 
 Additional information
-======================cd loc    
+======================
 
 You can modify the test data in testdata.php.
 
