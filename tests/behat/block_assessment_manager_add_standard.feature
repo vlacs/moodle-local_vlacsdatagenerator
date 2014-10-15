@@ -1,11 +1,11 @@
 @local @local_vlacsdatagenerator
 Feature: Manage assessment standards
   In order to add a new Common Core standard
-  As an administrator
+  As an administrator (Competency Editor)
   I need to go to the assessment manager block and use the edit standard feature.
 
   @javascript
-  Scenario: Edit standard
+  Scenario: Add a new standard
     Given I load the vla test data
     And I log in as "admin"
     And I click on "AP Microeconomics v9_gs-Teacher-1" "link"
