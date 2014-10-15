@@ -52,6 +52,10 @@ class behat_local_vlacsdatagenerator extends behat_base {
             new Given('I expand "' . get_string('administrationsite') .'" node'),
             new Given('I expand "' . get_string('pluginname', 'local_vlacsdatagenerator') .'" node'),
             new Given('I click on "' . get_string('rungenerator', 'local_vlacsdatagenerator'). '" "link"'),
+            new Given('I click on "Home" "link"'),
+            new Given('I click on "AP Microeconomics v9_gs-Teacher-1" "link"'),
+            new Given('I click on "Turn editing on" "link"'),
+            new Given('I add the "Assessment Manager" block'),
             new Given('I log out'),
         );
         return $steps;
