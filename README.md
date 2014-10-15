@@ -7,10 +7,37 @@ VLACS test data generator
 
 3- install the local plugin (copy this folder in Moodle /local folder and go to /admin/index.php with your browser)
 
-3-b on 1.9 you may have to manually trigger the script db/install.php
+4- in your config.php after
 
-4- in your browser, as admin, run /local/vlacsdatagenerator/testdatagenerator.php
+require_once(dirname(__FILE__) . '/lib/setup.php');
+
+Add
+
+$CFG->genius_api_token_incoming = 'arandomtoken';
+
+$CFG->genius_api_client_ips[]= '127.0.0.1';
+
+5- in your browser, in the administration block you can run the test data generator, it will generate all the test data automatically.
+
+
+Additional information
+======================cd loc    
 
 You can modify the test data in testdata.php.
 
 More information about the assessment manager database structure can be found in the documentation/databasestructure.xlsx.
+
+
+
+Behat test
+==========
+
+The tests folder contains all assessment manager repository behat tests.
+
+If you want to create a new behat test you must use as first step:
+
+Scenario: YOUR SCENARIO NAME
+
+Given I load the vla test data
+
+...
