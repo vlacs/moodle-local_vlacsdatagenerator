@@ -2,7 +2,7 @@
 Feature: Manage assessment pods
   In order to change a segment assessment pod's percent credit from 50 to 100
   As an administrator
-  I need to go to the assessment manager block and use the edit feature.
+  I need to go to the assessment manager block and use the edit pod feature.
 
   @javascript
   Scenario: Edit assessment pod
